@@ -1,0 +1,63 @@
+#+TITLE: Diophantine
+#+AUTHOR: Lucas Vieira
+#+EMAIL: lucasvieira@lisp.com.br
+
+* Introduction
+
+This is an application written in Common Lisp, which attempts to find solutions
+for diophantine equations.
+
+Currently, not all equations are supported (you can only enter equations with
+integer coefficients and exponents). The program also attempts to find integer
+values for the variables.
+
+* Installing
+
+I expect you to have Quicklisp installed. Simply clone this repository
+(directly, or create a symlink) on your ~local-projects~ directory. Then load the
+system and run the REPL:
+
+#+BEGIN_SRC lisp
+(ql:quickload :diophantine)
+(diophantine:ask-for-equation)
+#+END_SRC
+
+
+* Usage
+
+The REPL asks you to input an equation to perform the checking. The equation
+should have a single ~=~ sign, and each side of the equations can have any number
+of different variables.
+
+Each variable should be written in the form ~cx^e~, where ~c~ is a numeric
+coefficient, and ~e~ is a numeric exponent. Both of these numbers can be negative
+as well, though it is preferable that you leave the negative symbol between two
+factors.
+
+Below are some valid examples of equations.
+
+#+BEGIN_EXAMPLE
+x^2 + y^2 = c^2
+w^3 + x^3 = y^3 + z^3
+12x^3 + 3y^2 - 4z = 0
+#+END_EXAMPLE
+
+While the program attempts to find a solution, it will debrief the user
+periodically on the current state of the program. If the program takes too long,
+it will interrupt its work and ask the user if it should proceed.
+
+* Known bugs and problems
+
+- Currently does not determine whether a solution is trivial;
+- Only positive values are being tested;
+- Parser doesn't check variable usage, pretending each factor is just a
+  different variable (not that the program should work if any variable is
+  repeated, though);
+- Range evolution still makes possible to attempt redundant solutions.
+
+* License
+
+This project is distributed under a 2-clause BSD License. See LICENSE for
+details.
+
+Copyright (c) 2018 Lucas Vieira

@@ -69,15 +69,18 @@ just join the two lists as elements of another list.
   (let ((split-string (split-sequence #\Space side-string))
 	(results nil))
     (labels ((parse-power (potential-power)
-	       (handler-bind ((error #'(lambda (c) (invoke-restart 'recover))))
+	       (handler-bind ((error #'(lambda (e)
+				       (declare (ignore e))
+				       (invoke-restart 'skip-power))))
 		 (restart-case (parse-integer potential-power)
-		   (recover () 1))))
+		   (skip-power () 1))))
 	     (check-variable (potential-coefd-variable)
-	       (handler-bind ((error #'(lambda (c) (invoke-restart 'recover))))
+	       (handler-bind ((error #'(lambda (e)
+					 (declare (ignore e))
+					 (invoke-restart 'is-variable))))
 		 (restart-case
-		     (progn (parse-integer potential-coefd-variable)
-			    nil)
-		   (recover () t)))))
+		     (not (parse-integer potential-coefd-variable))
+		   (is-variable () t)))))
       (loop for part in split-string
 	 with token = 'variable
 	 with flip-coef = nil

@@ -63,11 +63,14 @@
   (labels ((prompt (query) (princ query) (finish-output) (read-line)))
     (loop for input = (prompt "Please enter an equation with a valid format: ")
        until (string= input "q")
-       do (handler-bind ((parse-error (invoke-restart 'recover)))
+       do (handler-bind ((parse-error
+			  #'(lambda (e)
+			      (declare (ignore e))
+			      (invoke-restart 'ignore-equation-parsing))))
 	    (restart-case
 		(let ((dismembered-equation (parse-equation input)))
 		  (format t "You've entered the equation ~a~&"
 			  (equation-format dismembered-equation))
 		  (run-genetic-algorithm dismembered-equation))
-	      (recover ()
+	      (ignore-equation-parsing ()
 		(format t "Invalid equation. Check the syntax.~&")))))))

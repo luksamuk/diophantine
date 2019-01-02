@@ -69,11 +69,11 @@ just join the two lists as elements of another list.
   (let ((split-string (split-sequence #\Space side-string))
 	(results nil))
     (labels ((parse-power (potential-power)
-	       (handler-bind ((error (invoke-restart 'recover)))
+	       (handler-bind ((error #'(lambda (c) (invoke-restart 'recover))))
 		 (restart-case (parse-integer potential-power)
 		   (recover () 1))))
 	     (check-variable (potential-coefd-variable)
-	       (handler-bind ((error (invoke-restart 'recover)))
+	       (handler-bind ((error #'(lambda (c) (invoke-restart 'recover))))
 		 (restart-case
 		     (progn (parse-integer potential-coefd-variable)
 			    nil)

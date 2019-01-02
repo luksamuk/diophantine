@@ -33,25 +33,29 @@ just join the two lists as elements of another list.
   (let ((letter (char-code #\a)))
     (with-output-to-string (*standard-output*)
       (labels ((format-side (side)
-		 (loop for variable in side
-		    for i from 0
-		    for coefficient = (car variable)
-		    for power = (cdr variable)
-		    unless (= coefficient 0)
-		    do (progn
-			 ;; Sum/sub signal
-			 (unless (zerop i)
-			   (princ (if (minusp coefficient) " - " " + ")))
-			 ;; Coefficient
-			 (when (or (not (= (abs coefficient) 1))
-				   (zerop power))
-			   (princ (abs coefficient)))
-			 (unless (zerop power)
-			   (princ (code-char letter))
-			   (unless (= power 1)
-			     (princ #\^)
-			     (princ power))
-			   (incf letter))))))
+		 (if (and (= (length side) 1)
+			  (= (caar side) 0)
+			  (= (cdar side) 1))
+		     (princ "0")
+		     (loop for variable in side
+			for i from 0
+			for coefficient = (car variable)
+			for power = (cdr variable)
+			unless (= coefficient 0)
+			do (progn
+			     ;; Sum/sub signal
+			     (unless (zerop i)
+			       (princ (if (minusp coefficient) " - " " + ")))
+			     ;; Coefficient
+			     (when (or (not (= (abs coefficient) 1))
+				       (zerop power))
+			       (princ (abs coefficient)))
+			     (unless (zerop power)
+			       (princ (code-char letter))
+			       (unless (= power 1)
+				 (princ #\^)
+				 (princ power))
+			       (incf letter)))))))
 	(format-side (car equation))
 	(princ " = ")
 	(format-side (cadr equation))))))
@@ -97,6 +101,8 @@ just join the two lists as elements of another list.
 		(cond ((string= part "-") (setf flip-coef t))
 		      ((not (string= part "+")) (error 'parse-error))))
 	 do (setf token (if (eq token 'variable) 'operator 'variable))))
+    (when (null results)
+      (push (cons 0 1) results))
     (reverse results)))
 
 (defun parse-equation (equation-string)
